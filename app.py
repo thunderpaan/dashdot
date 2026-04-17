@@ -61,10 +61,24 @@ if data.empty:
 # -----------------------
 # INDICATORS
 # -----------------------
-data['EMA10'] = EMAIndicator(data['Close'], 10).ema_indicator()
-data['EMA20'] = EMAIndicator(data['Close'], 20).ema_indicator()
-data['EMA50'] = EMAIndicator(data['Close'], 50).ema_indicator()
-data['EMA100'] = EMAIndicator(data['Close'], 100).ema_indicator()
+# Clean data first
+data = data.dropna()
+
+# Ensure enough data points
+if len(data) < 100:
+    st.warning("Not enough data for indicators")
+else:
+    # Convert to float (important)
+    data['Close'] = pd.to_numeric(data['Close'], errors='coerce')
+
+    # Drop NaN again after conversion
+    data = data.dropna()
+
+    # EMA
+    data['EMA10'] = EMAIndicator(close=data['Close'], window=10).ema_indicator()
+    data['EMA20'] = EMAIndicator(close=data['Close'], window=20).ema_indicator()
+    data['EMA50'] = EMAIndicator(close=data['Close'], window=50).ema_indicator()
+    data['EMA100'] = EMAIndicator(close=data['Close'], window=100).ema_indicator()
 
 macd = MACD(data['Close'])
 data['MACD'] = macd.macd()
